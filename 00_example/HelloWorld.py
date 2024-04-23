@@ -1,8 +1,10 @@
 # coding:utf8
+import os
+
 from pyspark import SparkConf, SparkContext
 
 if __name__ == '__main__':
-    conf = SparkConf().setAppName("WordCountHelloWorld")
+    conf = SparkConf().setAppName("WordCountHelloWorld").setMaster("local[*]")
     # 通过SparkConf对象构建SparkContext对象
     sc = SparkContext(conf=conf)
 
