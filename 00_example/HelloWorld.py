@@ -20,5 +20,11 @@ if __name__ == '__main__':
     # 将元组的value 按照key来分组, 对所有的value执行聚合操作(相加)
     result_rdd = words_with_one_rdd.reduceByKey(lambda a, b: a + b)
 
+    # 简写
+    # result_rdd = (sc.textFile("hdfs://node1:8020/wjd/words.txt")
+    #               .flatMap(lambda line: line.split(" "))
+    #               .map(lambda x: (x, 1))
+    #               .reduceByKey(lambda a, b: a + b))
+
     # 通过collect方法收集RDD的数据打印输出结果
     print(result_rdd.collect())

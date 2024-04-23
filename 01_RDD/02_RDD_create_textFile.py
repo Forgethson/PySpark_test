@@ -22,5 +22,5 @@ if __name__ == '__main__':
     print("file_rdd3 分区数:", file_rdd3.getNumPartitions())
 
     # 读取HDFS文件数据测试
-    hdfs_rdd = sc.textFile("hdfs://node1:8020/input/words.txt")
+    hdfs_rdd = sc.textFile("hdfs://node1:8020/wjd/words.txt")
     print("hdfs_rdd 内容:", hdfs_rdd.collect())
