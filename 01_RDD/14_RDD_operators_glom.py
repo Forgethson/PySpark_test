@@ -7,5 +7,5 @@ if __name__ == '__main__':
     sc = SparkContext(conf=conf)
 
     rdd = sc.parallelize([1, 2, 3, 4, 5, 6, 7, 8, 9], 2)
-
-    print(rdd.glom().flatMap(lambda x: x).collect())
+    print(rdd.glom().collect())  # [[1, 2, 3, 4], [5, 6, 7, 8, 9]]
+    print(rdd.glom().flatMap(lambda x: x).collect())  # [1, 2, 3, 4, 5, 6, 7, 8, 9]

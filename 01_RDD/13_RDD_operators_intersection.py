@@ -10,6 +10,6 @@ if __name__ == '__main__':
     rdd2 = sc.parallelize([('a', 1), ('b', 3)])
 
     # 通过intersection算子求RDD之间的交集, 将交集取出 返回新RDD
-    rdd3 = rdd1.intersection(rdd2)
+    rdd3 = rdd1.intersection(rdd2)  # [('a', 1)]
 
     print(rdd3.collect())

@@ -8,9 +8,7 @@ if __name__ == '__main__':
 
     rdd1 = sc.parallelize([1, 1, 3, 3])
     rdd2 = sc.parallelize(["a", "b", "a"])
-
-    rdd3 = rdd1.union(rdd2)
-    print(rdd3.collect())
+    print(rdd1.union(rdd2).collect())  # [1, 1, 3, 3, 'a', 'b', 'a']
 
 """
 1. 可以看到 union算子是不会去重的

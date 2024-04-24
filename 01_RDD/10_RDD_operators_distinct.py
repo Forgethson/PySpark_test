@@ -9,7 +9,7 @@ if __name__ == '__main__':
     rdd = sc.parallelize([1, 1, 1, 2, 2, 2, 3, 3, 3])
 
     # distinct 进行RDD数据去重操作
-    print(rdd.distinct().collect())
+    print(rdd.distinct().collect())  # [1, 2, 3]
 
     rdd2 = sc.parallelize([('a', 1), ('a', 1), ('a', 3)])
-    print(rdd2.distinct().collect())
+    print(rdd2.distinct().collect())  # [('a', 1), ('a', 3)]
