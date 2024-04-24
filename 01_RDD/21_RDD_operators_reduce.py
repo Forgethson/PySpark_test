@@ -7,5 +7,4 @@ if __name__ == '__main__':
     sc = SparkContext(conf=conf)
 
     rdd = sc.parallelize([1, 2, 3, 4, 5])
-
-    print(rdd.reduce(lambda a, b: a + b))
+    print(rdd.reduce(lambda a, b: a + b))  # 15

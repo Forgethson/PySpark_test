@@ -8,12 +8,12 @@ if __name__ == '__main__':
 
     rdd = sc.parallelize([1, 3, 2, 4, 7, 9, 6], 3)
 
+
     def process(iter):
         result = list()
         for it in iter:
             result.append(it * 10)
-
         return result
 
 
-    print(rdd.mapPartitions(process).collect())
+    print(rdd.mapPartitions(process).collect())  # [10, 30, 20, 40, 70, 90, 60]

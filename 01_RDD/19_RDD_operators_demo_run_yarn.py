@@ -5,6 +5,7 @@ from defs_19 import city_with_category
 import json
 import os
 os.environ['HADOOP_CONF_DIR'] = "/export/server/hadoop/etc/hadoop"
+os.environ['PYSPARK_PYTHON'] = "/export/server/anaconda3/envs/pyspark/bin/python3.8"
 
 if __name__ == '__main__':
     # 提交 到yarn集群, master 设置为yarn
@@ -17,7 +18,7 @@ if __name__ == '__main__':
     sc = SparkContext(conf=conf)
 
     # 在集群中运行, 我们需要用HDFS路径了. 不能用本地路径
-    file_rdd = sc.textFile("hdfs://node1:8020/input/order.text")
+    file_rdd = sc.textFile("hdfs://node1:8020/wjd/order.text")
 
     # 进行rdd数据的split 按照|符号进行, 得到一个个的json数据
     jsons_rdd = file_rdd.flatMap(lambda line: line.split("|"))

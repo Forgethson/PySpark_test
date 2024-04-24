@@ -8,6 +8,5 @@ if __name__ == '__main__':
 
     rdd = sc.parallelize([1, 3, 2, 4, 7, 9, 6], 1)
 
-    print(rdd.takeOrdered(3))
-
-    print(rdd.takeOrdered(3, lambda x: -x))
+    print(rdd.takeOrdered(3))  # [1, 2, 3]
+    print(rdd.takeOrdered(3, lambda x: -x))  # [9, 7, 6]
