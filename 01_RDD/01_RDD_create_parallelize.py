@@ -19,3 +19,9 @@ if __name__ == '__main__':
     # collect方法, 是将RDD(分布式对象)中每个分区的数据, 都发送到Driver中, 形成一个Python List对象
     # collect: 分布式 -> 本地集合
     print("rdd的内容是: ", rdd2.collect())
+
+    print(sc.parallelize(["a", "b", "c"]).collect())  # list
+    print(sc.parallelize({"a": 1, "b": 2, "c": 3}).collect())  # dict
+    print(sc.parallelize({"a", "b", "c"}).collect())  # set
+    print(sc.parallelize([('a', 1), ('a', 1), ('b', 1), ('b', 1), ('a', 1)]).collect())  # tuple
+    print(sc.parallelize([["a"], ["b"], ["c"]]).collect())  # list

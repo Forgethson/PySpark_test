@@ -9,4 +9,5 @@ if __name__ == '__main__':
 
     # 读取小文件文件夹
     rdd = sc.wholeTextFiles("hdfs://node1:8020/wjd/tiny_files")
+    print(rdd.collect())
     print(rdd.map(lambda x: x[1]).collect())

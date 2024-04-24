@@ -8,5 +8,7 @@ if __name__ == '__main__':
 
     rdd = sc.parallelize(["hadoop spark hadoop", "spark hadoop hadoop", "hadoop flink spark"])
     # 得到所有的单词, 组成RDD, flatMap的传入参数 和map一致, 就是给map逻辑用的, 解除嵌套无需逻辑(传参)
+    rdd1 = rdd.map(lambda line: line.split(" "))
     rdd2 = rdd.flatMap(lambda line: line.split(" "))
+    print(rdd1.collect())
     print(rdd2.collect())
