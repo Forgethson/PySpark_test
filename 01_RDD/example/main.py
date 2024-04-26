@@ -14,7 +14,7 @@ if __name__ == '__main__':
     sc = SparkContext(conf=conf)
 
     # 1. 读取数据文件
-    file_rdd = sc.textFile("hdfs://node1:8020/input/SogouQ.txt")
+    file_rdd = sc.textFile("hdfs://node1:8020/wjd/SogouQ.txt")
 
     # 2. 对数据进行切分 \t
     split_rdd = file_rdd.map(lambda x: x.split("\t"))
