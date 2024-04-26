@@ -6,13 +6,12 @@ from pyspark.sql.types import StructType, StringType, IntegerType
 import pandas as pd
 from pyspark.sql import functions as F
 
-
 if __name__ == '__main__':
     # 0. 构建执行环境入口对象SparkSession
-    spark = SparkSession.builder.\
-        appName("test").\
-        master("local[*]").\
-        config("spark.sql.shuffle.partitions", 2).\
+    spark = SparkSession.builder. \
+        appName("test"). \
+        master("local[*]"). \
+        config("spark.sql.shuffle.partitions", 2). \
         getOrCreate()
     sc = spark.sparkContext
 
@@ -26,7 +25,7 @@ if __name__ == '__main__':
         option("header", False). \
         option("encoding", "utf-8"). \
         schema(schema=schema). \
-        load("../data/input/sql/u.data")
+        load("hdfs://node1:8020/wjd/sql/u.data")
 
     # # 1. 写出df到mysql数据库中
     # df.write.mode("overwrite").\
@@ -34,14 +33,14 @@ if __name__ == '__main__':
     #     option("url", "jdbc:mysql://node1:3306/bigdata?useSSL=false&useUnicode=true").\
     #     option("dbtable", "movie_data").\
     #     option("user", "root").\
-    #     option("password", "2212072ok1").\
+    #     option("password", "123456").\
     #     save()
 
     df2 = spark.read.format("jdbc"). \
         option("url", "jdbc:mysql://node1:3306/bigdata?useSSL=false&useUnicode=true"). \
         option("dbtable", "movie_data"). \
         option("user", "root"). \
-        option("password", "2212072ok1"). \
+        option("password", "123456"). \
         load()
 
     df2.printSchema()
@@ -50,4 +49,3 @@ if __name__ == '__main__':
 JDBC写出, 会自动创建表的.
 因为DataFrame中有表结构信息, StructType记录的 各个字段的 名称 类型  和是否运行为空
 """
-

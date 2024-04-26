@@ -14,6 +14,6 @@ if __name__ == '__main__':
     sc = spark.sparkContext
 
     # JSON类型自带有Schema信息
-    df = spark.read.format("json").load("../data/input/sql/people.json")
+    df = spark.read.format("json").load("hdfs://node1:8020/wjd/sql/people.json")
     df.printSchema()
     df.show()

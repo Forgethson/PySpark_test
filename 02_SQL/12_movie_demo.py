@@ -17,10 +17,10 @@ if __name__ == '__main__':
     sc = spark.sparkContext
 
     """
-    spark.sql.shuffle.partitions 参数指的是, 在sql计算中, shuffle算子阶段默认的分区数是200个.
+    spark.sql.shuffle.partitions 参数指的是, 在sql计算中, shuffle算子阶段默认的分区数.
     对于集群模式来说, 200个默认也算比较合适
     如果在local下运行, 200个很多, 在调度上会带来额外的损耗
-    所以在local下建议修改比较低 比如2\4\10均可
+    所以在local下建议修改比较低 比如2, 4, 10均可
     这个参数和Spark RDD中设置并行度的参数 是相互独立的.
     """
 
@@ -34,55 +34,33 @@ if __name__ == '__main__':
         option("header", False).\
         option("encoding", "utf-8").\
         schema(schema=schema).\
-        load("../data/input/sql/u.data")
+        load("hdfs://node1:8020/wjd/sql/u.data")
 
-    # TODO 1: 用户平均分
-    df.groupBy("user_id").\
-        avg("rank").\
-        withColumnRenamed("avg(rank)", "avg_rank").\
-        withColumn("avg_rank", F.round("avg_rank", 2)).\
-        orderBy("avg_rank", ascending=False).\
-        show()
+    df.createOrReplaceTempView("user_movie_rank")
 
-    # TODO 2: 电影的平均分查询
-    df.createTempView("movie")
-    spark.sql("""
-        SELECT movie_id, ROUND(AVG(rank), 2) AS avg_rank FROM movie GROUP BY movie_id ORDER BY avg_rank DESC
-    """).show()
+    # 1：用户平均分
+    print("用户平均分")
+    spark.sql("SELECT user_id, avg(rank) AS avg_rank FROM user_movie_rank GROUP BY user_id ORDER BY avg_rank DESC").show()
 
-    # TODO 3: 查询大于平均分的电影的数量 # Row
-    print("大于平均分电影的数量: ", df.where(df['rank'] > df.select(F.avg(df['rank'])).first()['avg(rank)']).count())
+    # 2：电影平均分
+    print("电影平均分")
+    spark.sql("SELECT movie_id, avg(rank) AS avg_rank FROM user_movie_rank GROUP BY movie_id ORDER BY avg_rank DESC").show()
 
-    # TODO 4: 查询高分电影中(>3)打分次数最多的用户, 此人打分的平均分
-    # 先找出这个人
-    user_id = df.where("rank > 3").\
-        groupBy("user_id").\
-        count().\
-        withColumnRenamed("count", "cnt").\
-        orderBy("cnt", ascending=False).\
-        limit(1).\
-        first()['user_id']
-    # 计算这个人的打分平均分
-    df.filter(df['user_id'] == user_id).\
-        select(F.round(F.avg("rank"), 2)).show()
+    # 3：查询大于平均分的电影的数量
+    print("大于平均分的电影的数量")
+    spark.sql("SELECT count(*) FROM (SELECT movie_id, avg(rank) FROM user_movie_rank GROUP BY movie_id HAVING avg(rank) > (SELECT avg(rank) FROM user_movie_rank))").show()
 
-    # TODO 5: 查询每个用户的平局打分, 最低打分, 最高打分
-    df.groupBy("user_id").\
-        agg(
-            F.round(F.avg("rank"), 2).alias("avg_rank"),
-            F.min("rank").alias("min_rank"),
-            F.max("rank").alias("max_rank")
-        ).show()
+    # 4：查询高分电影中（>3）打分次数最多的用户，并求出此人打的平均分
+    print("查询高分电影中（>3）打分次数最多的用户，并求出此人打的平均分")
+    spark.sql("SELECT avg(rank) FROM user_movie_rank WHERE user_id = (SELECT user_id FROM user_movie_rank WHERE movie_id in (SELECT movie_id FROM user_movie_rank GROUP BY movie_id HAVING avg(rank) > 3) GROUP BY user_id ORDER BY count(user_id) DESC LIMIT 1)").show()
 
-    # TODO 6: 查询评分超过100次的电影, 的平均分 排名 TOP10
-    df.groupBy("movie_id").\
-        agg(
-            F.count("movie_id").alias("cnt"),
-            F.round(F.avg("rank"), 2).alias("avg_rank")
-        ).where("cnt > 100").\
-        orderBy("avg_rank", ascending=False).\
-        limit(10).\
-        show()
+    # 5：查询每个用户的平均打分，最低打分，最高打分
+    print("查询每个用户的平均打分，最低打分，最高打分")
+    spark.sql("SELECT user_id, avg(rank) AS avg_rank, min(rank) AS min_rank, max(rank) AS max_rank FROM user_movie_rank GROUP BY user_id ORDER BY avg_rank DESC").show()
+
+    # 6：查询被评分超过100次的电影的平均分排名TOP10
+    print("查询被评分超过100次的电影的平均分排名TOP10")
+    spark.sql("SELECT movie_id, avg(rank) AS avg_rank FROM user_movie_rank GROUP BY movie_id HAVING count(movie_id) > 100 ORDER BY avg_rank DESC LIMIT 10").show()
 
     time.sleep(10000)
 

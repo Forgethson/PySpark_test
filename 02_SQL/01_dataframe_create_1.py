@@ -12,7 +12,8 @@ if __name__ == '__main__':
     sc = spark.sparkContext
 
     # 基于RDD转换成DataFrame
-    rdd = sc.textFile("../data/input/sql/people.txt").\
+    # 没有使用flatMap解除嵌套，因为需要保留二维数组（表格）的形式，之后转换第二列age的数据类型为int
+    rdd = sc.textFile("hdfs://node1:8020/wjd/sql/people.txt").\
         map(lambda x: x.split(",")).\
         map(lambda x: (x[0], int(x[1])))
 

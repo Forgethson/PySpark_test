@@ -13,7 +13,7 @@ if __name__ == '__main__':
     sc = spark.sparkContext
 
     # 基于RDD转换成DataFrame
-    rdd = sc.textFile("../data/input/sql/people.txt").\
+    rdd = sc.textFile("hdfs://node1:8020/wjd/sql/people.txt").\
         map(lambda x: x.split(",")).\
         map(lambda x: (x[0], int(x[1])))
 
